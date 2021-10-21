@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.bootcdn.net/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css" />
+<title>json-stolenzc</title>
+<style>
+    body {
+        background-color: #F7F7F7
+    }
+    .box{
+        display: flex;
+        align-items: center;
+    }
+
+    .operation{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .show-rough{
+        border: 1px solid #ccc;
+        width: 48%;
+        height: 95vh;
+        resize: none;
+        font-size: large;
+    }
+
+    .showinfo{
+        position: absolute;
+        /* background-color: #eef1f8; */
+        width: 48%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        /* padding: 5px;
+        border-radius: 4px; */
+        /* border: 1px solid #ccc; */
+        /* display: none; */
+    }
+    .showinfo pre{
+        padding: 5px;
+        border: 1px solid #ccc;
+        margin:2;
+        height:95%;
+        overflow-y: scroll;
+    }
+
+    .footer{
+        text-align: center;
+        vertical-align: bottom;
+    }
+
+    a:link,a:visited{
+        color:black
+    }
+
+    a:hover{
+        color:blue
+    }
+
+</style>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script> 
+
+<script type="text/javascript">
+ 
+    $(document).ready(function(){
+        // 使用说明
+        console.log("你真是个小可爱，使用说明都被你找到了")
+        console.log("进入网页，自动聚焦到输入框")
+        console.log("输入完成，敲回车自动使用替换并格式化方法")
+        console.log("替换主要是替换掉单引号、True、False、None字符为json标准字符")
+        console.log("除非json中有这些不需要替换，否则都建议使用替换并格式化")
+        // 聚焦输入框
+        $("#input").focus();
+        // 绑定回车键
+        $("#input").keypress(function(e) {
+            var eCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+                if (eCode == 13){
+                    // run(true)
+                    format(true)
+        }
+    });
+        // $(".show-rough").mouseover(function(){
+        //     var left = $(this).offset().left + $(this).width() +20;//计算div显示位置
+        //     var top = $(this).offset().top + 20;
+        //     var _jsonDate = $.parseJSON($(this).text());
+        //     var showJson = syntaxHighlight(_jsonDate);
+        //     $("#show-info").css({"left":left,"top":top}).show();
+        //     $("#show-pre").html(showJson);
+        // });
+        // $(".show-rough").mouseout(function(){
+        //     $("#show-info").hide().html();
+        //     $("#show-pre").html();
+        // })
+    });
+
+    function format(is_replace=true, collapsed=false, recursive_collapser=true){
+        console.log(is_replace, collapsed, recursive_collapser)
+        try {
+            var input = $('#input').val()
+            if (is_replace == true){
+                input = input.replace(/\'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false').replace(/None/g, 'null');
+            }
+            var input = eval('(' + input + ')');
+        }
+        catch (error) {
+            return alert(error);
+        }
+
+        $('#show-pre').JSONView(input, { collapsed: collapsed, recursive_collapser: recursive_collapser })
+    }
+
+    function run(is_replace){
+        // 获取输入值
+        var _jsonData = document.getElementById("input").value
+        // 调用json格式化
+        var showJson = syntaxHighlight(_jsonData, is_replace)
+        // 输出到页面上
+        $("#show-pre").html(showJson);
+        // document.getElementById("show-info").innerText = showJson;
+    }
+
+    function custom_config(){
+        var replace = $('#repace').val() == 'true' ? true : false
+        var expand = $('#expand').val() == 'true' ? true : false
+        var expand_child = $('#expand_child').val() == 'true' ? true : false
+        format(replace, expand, expand_child)
+    }
+
+    function newtab(){
+        var html = document.getElementById("input").value
+        html = html.replace(/\'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false').replace(/None/g, 'null');
+        var newwindow = window.open('', "_blank",'');
+        newwindow.document.write(html);
+    }
+
+    //处理json数据，采用正则过滤出不同类型参数
+    function syntaxHighlight(json, is_replace) {
+        // 判断是否替换
+        if (is_replace == true){
+            json = json.replace(/\'/g, '"').replace(/True/g, 'true').replace(/False/g, 'false').replace(/None/g, 'null');
+        }
+        // json格式化，缩进为4个字符
+        json = JSON.stringify(JSON.parse(json), undefined, 4);
+        json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+        // 进行颜色替换
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+            // js简单格式化json的方法
+            // var text = "...";//json格式的字符串
+            // var jsonPretty = JSON.stringify(JSON.parse(text),null,2);  
+        });
+    };
+</script>
+</head>
+<body>
+
+
+    <div class="box">
+
+        <textarea id="input" class="show-rough"></textarea>
+        <div class="operation">
+            <button onclick="format(true, true)" title="全部折叠">折叠</button>
+            <button onclick="format(true)" title="全部展开">展开</button>
+            <button onclick="newtab()" title="新标签打开">new</button>
+            <span>&emsp;</span>
+            <select name="replace" id="repace" title="是否替换">
+                <option disabled>替换</option>
+                <option value=true>是</option>
+                <option value=false>否</option>
+            </select>
+            <select name="expand" id="expand" title="是否折叠">
+                <option disabled>折叠</option>
+                <option value=true>是</option>
+                <option value=false>否</option>
+            </select>
+            <select name="expand_child" id="expand_child" title="是否展开子节点">
+                <option disabled>子节点</option>
+                <option value=true>是</option>
+                <option value=false>否</option>
+            </select>
+            <button onclick="custom_config()" title="执行当前设置">确定</button>
+
+        </div>
+    
+        <!-- <button onclick="run(true)">替换并格式化</button>
+        <button onclick="run(false)">直接格式化</button>
+        <button onclick="newtab()">打开新标签</button> -->
+        <div id="show-info" class="showinfo">
+            <pre id="show-pre" style="font-size: 1.3em;"></pre>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="http://beian.miit.gov.cn">蜀ICP备19037701号</a>
+    </div>
+
+</body>
+</html>
