@@ -137,6 +137,13 @@
         newwindow.document.write(html);
     }
 
+    function zhuanyi(){
+        // 去转义函数
+        var html = document.getElementById("input").value
+        html = html.replace(/\\(.{1})/g, "$1")
+        document.getElementById("input").value = html
+    }
+
     //处理json数据，采用正则过滤出不同类型参数
     function syntaxHighlight(json, is_replace) {
         // 判断是否替换
@@ -175,20 +182,24 @@
 
         <textarea id="input" class="show-rough"></textarea>
         <div class="operation">
+            <button onclick="zhuanyi()" title="去转义">去转义</button>
             <button onclick="format(true, true)" title="全部折叠">折叠</button>
             <button onclick="format(true)" title="全部展开">展开</button>
             <button onclick="newtab()" title="新标签打开">new</button>
             <span>&emsp;</span>
+            <span>是否替换</span>
             <select name="replace" id="repace" title="是否替换">
                 <option disabled>替换</option>
                 <option value=true>是</option>
                 <option value=false>否</option>
             </select>
+            <span>是否折叠</span>
             <select name="expand" id="expand" title="是否折叠">
                 <option disabled>折叠</option>
                 <option value=true>是</option>
                 <option value=false>否</option>
             </select>
+            <span>子节点展开</span>
             <select name="expand_child" id="expand_child" title="是否展开子节点">
                 <option disabled>子节点</option>
                 <option value=true>是</option>
