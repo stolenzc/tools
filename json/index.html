@@ -146,6 +146,10 @@
 
     function get_data(){
         var url = document.getElementById("requests_url").value
+        if (url.substr(0, 5) == "http:"){
+            url = url.replace(/http:/, "https:")
+            document.getElementById("requests_url").value = url
+        }
         var httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', url, true);
         httpRequest.send();
