@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    * {
+      margin: 1;
+      padding: 1;
+    }
+    .show-rough{
+      border: 1px solid #ccc;
+      width: 30%;
+      height: 95vh;
+      resize: none;
+      font-size: large;
+    }
+  </style>
+</head>
+
+<body>
+
+  <textarea id="points_input" class="show-rough"></textarea>
+
+  <canvas id="myCanvas" style="position: absolute; width: 48%; height: 95vh;">
+    <p>您的系统不支持此程序!</p>
+  </canvas>
+
+
+  <script>
+    document.onkeydown = function(event){        //在全局中绑定按下事件  
+      var e  = event  ||  window.e;
+      var keyCode = e.keyCode || e.which;
+      switch(keyCode){
+        case 13:
+          points = document.getElementById("points_input").value
+          points = JSON.parse(points)
+
+          draw(points)
+          break;
+      }
+    }
+    var ctx = document.querySelector('#myCanvas').getContext('2d')
+    function draw(points){
+      ctx.strokeStyle = '#f00'
+      ctx.fillStyle = 'transParent'
+      ctx.beginPath()
+      for(let i = 0; i < points.length; ++i){
+        for(let k = 0; k < points[i].length; ++k){
+          if(k == 0){
+            ctx.moveTo(points[i][k].x / 10 + 10, points[i][k].y / 10 + 10);
+          }else{
+            ctx.lineTo(points[i][k].x / 10 + 10, points[i][k].y / 10 + 10)
+          }
+        }
+      }
+      ctx.stroke()
+    }
+    var points = [[{'x': 0, 'y': 0}, {'x': 1220, 'y': 0}, {'x': 1220, 'y': 2440}, {'x': 0, 'y': 2440}, {'x': 0, 'y': 0}]]
+    draw(points)
+  </script>
+</body>
+
+</html>
