@@ -123,6 +123,18 @@
         // document.getElementById("show-info").innerText = showJson;
     }
 
+    function decodeUnicode() {
+        var html = document.getElementById("input").value
+        html = html.replace(/\\/g, "%");
+        //转换中文
+        html = unescape(html);
+        //将其他受影响的转换回原来
+        html = html.replace(/%/g, "\\");
+        //对网址的链接进行处理
+        html = html.replace(/\\/g, "");
+        document.getElementById("input").value = html
+    }
+
     function custom_config(){
         var replace = $('#repace').val() == 'true' ? true : false
         var expand = $('#expand').val() == 'true' ? true : false
@@ -205,6 +217,7 @@
 
         <textarea id="input" class="show-rough"></textarea>
         <div class="operation">
+            <button onclick="decodeUnicode()" title="转中文">转中文</button>
             <button onclick="zhuanyi()" title="去转义">去转义</button>
             <button onclick="format(true, true)" title="全部折叠">折叠</button>
             <button onclick="format(true)" title="全部展开">展开</button>
