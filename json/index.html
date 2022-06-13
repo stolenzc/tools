@@ -123,15 +123,10 @@
         // document.getElementById("show-info").innerText = showJson;
     }
 
-    function decodeUnicode() {
+    function decodeUnicode(){
+        // unicode 转为中文
         var html = document.getElementById("input").value
-        html = html.replace(/\\/g, "%");
-        //转换中文
-        html = unescape(html);
-        //将其他受影响的转换回原来
-        html = html.replace(/%/g, "\\");
-        //对网址的链接进行处理
-        html = html.replace(/\\/g, "");
+        html = unescape(html.replace(/\\u/g, '%u'))
         document.getElementById("input").value = html
     }
 
@@ -153,6 +148,13 @@
         // 去转义函数
         var html = document.getElementById("input").value
         html = html.replace(/\\(.{1})/g, "$1")
+        document.getElementById("input").value = html
+    }
+
+    function trans_to_chinese(){
+        // unicode 转为中文
+        var html = document.getElementById("input").value
+        html = unescape(html.replace(/\\u/g, '%u'))
         document.getElementById("input").value = html
     }
 
@@ -217,11 +219,11 @@
 
         <textarea id="input" class="show-rough"></textarea>
         <div class="operation">
-            <button onclick="decodeUnicode()" title="转中文">转中文</button>
+            <button onclick="decodeUnicode()" title="unicode转中文">转中文</button>
             <button onclick="zhuanyi()" title="去转义">去转义</button>
             <button onclick="format(true, true)" title="全部折叠">折叠</button>
             <button onclick="format(true)" title="全部展开">展开</button>
-            <button onclick="newtab()" title="新标签打开">new</button>
+            <button onclick="newtab()" title="新标签打开">new_tab</button>
             <span>&emsp;</span>
             <span>是否替换</span>
             <select name="replace" id="repace" title="是否替换">
