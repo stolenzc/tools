@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+    <title>persistence-stolenzc</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/static/js/base64.js"></script>
+    <style>
+        .show_content{
+            width: 100%;
+            height: 100%;
+            resize: none;
+            font-size: 2px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="show_content">
+        <strong>躺平</strong>
+    </div>
+    <script type="text/javascript">
+        function getQueryVariable(variable){
+            let query = window.location.search.substring(1);
+            let vars = query.split("&");
+            for (let i=0;i<vars.length;i++) {
+                    let pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
+        
+        show_word_base64 = getQueryVariable('show_word');
+        show_word = utf8to16(base64decode(show_word_base64));
+        alert(show_word)
+    </script>
+</body>
+
+
