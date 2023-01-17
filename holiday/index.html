@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<title>holiday</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body{
+        width: 100%;
+        height: calc(100vh);
+        background-color: black;
+    }
+    .show_content{
+        width: 100%;
+        resize: none;
+        font-size: 50px;
+        text-align: center;
+        position: relative;
+        top: 50%;
+        color: white;
+    }
+</style>
+
+<body>
+    <div class="show_content">
+        <span>距离</span>
+        <span id="year"></span>
+        <span>年</span>
+        <span id="month"></span>
+        <span>月</span>
+        <span id="day"></span>
+        <span>日</span>
+        <span id="hour"></span>
+        <span>时</span>
+        <span>春节放假还剩</span>
+        <span id="show_day"></span>
+        <span>个工作秒</span>
+    </div>
+    <script>
+        const getLocationParams = (keyWords) => {
+            // 提取路由值（字符串）
+            let href = window.location.href;
+            // 从占位符开始截取路由（不包括占位符）
+            let query = href.substring(href.indexOf("?") + 1);
+            // 根据 & 切割字符串
+            let vars = query.split("&");
+            for (let i = 0; i < vars.length; i++) {
+                let pair = vars[i].split("=");
+                // 根据指定的参数名去筛选参数值
+                if (pair[0] == keyWords) {
+                    return decodeURI(pair[1]);
+                }
+            }
+            return "没有该参数信息";
+        };
+        endDateStr = getLocationParams("endDate")
+        if (endDateStr == "没有该参数信息") {
+            endDateStr = "2023-01-19 18:00:00"
+        }else{
+            endDateStr = endDateStr + " 18:00:00"
+        }
+
+        end_date = new Date(endDateStr);
+        setDateShow(end_date)
+        updateHolidaySeconds(end_date)
+
+        function setDateShow(end_date){
+            document.getElementById("year").innerText = end_date.getFullYear();
+            document.getElementById("month").innerText = end_date.getMonth() + 1;
+            document.getElementById("day").innerText = end_date.getDate();
+            document.getElementById("hour").innerText = end_date.getHours();
+        }
+        function getHolidaySeconds(end_date){
+            // 获取剩余的秒数
+            var now = new Date();
+            var endDay = end_date.getDate();
+            if (now > end_date) {
+                return 0
+            }
+            var day = now.getDate();
+            if (now.getHours() >= 18) {
+                remainSeconds = 0
+            }else if (now.getHours()<9){
+                remainSeconds = 9.5 * 60 * 60
+            }else{
+                remainSeconds = 60 - now.getSeconds() + 60 * (60 - now.getMinutes()) + 60 * 60 * (18 - now.getHours())
+            }
+            for(i=day+1;i<=endDay;i++){
+                remainSeconds += 60 * 60 * 9.5
+            }
+            return remainSeconds
+        }
+
+        function updateHolidaySeconds(end_date){
+            var show_day = document.getElementById("show_day");
+            remainSeconds = getHolidaySeconds(end_date)
+            show_day.innerHTML = remainSeconds
+        }
+
+        setInterval(updateHolidaySeconds, 1000);
+    </script>
+</body>
