@@ -43,7 +43,7 @@
 </style>
 
 <body>
-    <div class="show_content">
+    <div class="show_content" id="show_content">
         <span>当前是</span>
         <span id="now", class="num_show"></span>
         <br/>
@@ -136,10 +136,19 @@
 
 
         function updateHolidaySeconds(){
-            document.getElementById("show_day").innerText = getHolidaySeconds();
-            document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
+            remainSeconds = getHolidaySeconds();
+            if (remainSeconds>0){
+                document.getElementById("show_day").innerText = remainSeconds;
+                document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
+            }else{
+                document.getElementById("show_content").innerHTML = '<img src="/static/img/fly.webp">';
+            }
+            if (typeof timer != "undefined" && remainSeconds == 0) {
+                clearInterval(timer);
+            }
         }
 
-        setInterval(updateHolidaySeconds, 1000);
+        var timer = setInterval(updateHolidaySeconds, 1000);
+
     </script>
 </body>
