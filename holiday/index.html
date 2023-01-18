@@ -126,7 +126,7 @@
             }else if (now.getHours()<8 || (now.getHours()==8 && now.getMinutes()<30)){
                 remainSeconds = 9.5 * 60 * 60
             }else{
-                remainSeconds = 60 - now.getSeconds() + 60 * (60 - now.getMinutes()) + 60 * 60 * (18 - now.getHours())
+                remainSeconds = 60 - now.getSeconds() + 60 * (59 - now.getMinutes()) + 60 * 60 * (17 - now.getHours())
             }
             for(i=day+1;i<=endDay;i++){
                 remainSeconds += 60 * 60 * 9.5
