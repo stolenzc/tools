@@ -44,20 +44,40 @@
 
 <body>
     <div class="show_content">
+        <span>当前是</span>
+        <span id="now", class="num_show"></span>
+        <br/>
         <span>距离</span>
-        <span id="year", class="num_show"></span>
+        <span id="endDate", class="num_show"></span>
+        <!-- <span id="year", class="num_show"></span>
         <span>年</span>
         <span id="month", class="num_show"></span>
         <span>月</span>
         <span id="day", class="num_show"></span>
         <span>日</span>
         <span id="hour", class="num_show"></span>
-        <span>时</span>
+        <span>时</span> -->
         <span>春节放假还剩</span>
         <span id="show_day", class="num_show"></span>
         <span>个工作秒</span>
     </div>
     <script>
+        Date.prototype.Format = function (fmt) {
+            let o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (let k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+
         const getLocationParams = (keyWords) => {
             // 提取路由值（字符串）
             let href = window.location.href;
@@ -86,10 +106,12 @@
         updateHolidaySeconds()
 
         function setDateShow(end_date){
-            document.getElementById("year").innerText = end_date.getFullYear();
-            document.getElementById("month").innerText = end_date.getMonth() + 1;
-            document.getElementById("day").innerText = end_date.getDate();
-            document.getElementById("hour").innerText = end_date.getHours();
+            document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
+            document.getElementById("endDate").innerText = end_date.Format("yyyy-MM-dd hh:mm:ss");
+            // document.getElementById("year").innerText = end_date.getFullYear();
+            // document.getElementById("month").innerText = end_date.getMonth() + 1;
+            // document.getElementById("day").innerText = end_date.getDate();
+            // document.getElementById("hour").innerText = end_date.getHours();
         }
         function getHolidaySeconds(){
             // 获取剩余的秒数
@@ -112,10 +134,10 @@
             return remainSeconds
         }
 
+
         function updateHolidaySeconds(){
-            var show_day = document.getElementById("show_day");
-            remainSeconds = getHolidaySeconds(end_date)
-            show_day.innerHTML = remainSeconds
+            document.getElementById("show_day").innerText = getHolidaySeconds();
+            document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
         }
 
         setInterval(updateHolidaySeconds, 1000);
