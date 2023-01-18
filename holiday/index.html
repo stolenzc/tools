@@ -141,7 +141,7 @@
                 document.getElementById("show_day").innerText = remainSeconds;
                 document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
             }else{
-                document.getElementById("show_content").innerHTML = '<img src="/static/img/fly.webp">';
+                document.getElementById("show_content").innerHTML = '放假时间到了，快回家吧<br\><img src="/static/img/fly.webp">';
             }
             if (typeof timer != "undefined" && remainSeconds == 0) {
                 clearInterval(timer);
