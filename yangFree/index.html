@@ -1,0 +1,85 @@
+<! DOCTYPE html>
+<html>   
+    <head>
+        <meta charset="utf-8">
+        <title>
+            放假倒计时
+        </title>
+        <style type="text/css">
+            body{   
+                height: 100%;
+                width: 100%;
+                background-color: black;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .show_content{
+                font-size: 50px;
+                color:white;
+                text-align: center;
+            }
+        </style>    
+    </head>
+    <body>
+        <div class="show_content">
+            <div id="clock"></div>
+            <span>距离下班时间</span>
+            <span id="endDate">2023-01-20 18:30:00</span>
+            <span>还有</span>
+            <span id="remainder"></span>
+            <span >秒</span>
+        </div>
+    </body>
+    <script>
+        //判断月/小时/分/秒是否小于10
+        function formatNum(num){
+            if (num<10){
+                numStr="0"+num
+            }else {numStr=num}
+            return numStr
+        }
+        // 获取实时时间
+        function getRealTime(){
+            var clock=document.getElementById("clock");
+            var now=new Date();//获取当前时间
+            var year=now.getFullYear();
+            var month=now.getMonth();
+            month=month+1;    //<!--月份是从0开始获取-->
+            monthStr=formatNum(month)
+            var day=now.getDate();
+            var hour=now.getHours();
+            hourStr=formatNum(hour)
+            var minute=now.getMinutes();
+            minuteStr=formatNum(minute)
+            var second=now.getSeconds();
+            secondStr=formatNum(second)
+            var time=year+"-"+monthStr+"-"+day+" "+hourStr+":"+minuteStr+":"+secondStr;
+            clock.innerHTML="当前时间   "+time;
+        }       
+        //获取离结束时间还有多少时间
+        function getRemainderTime(){
+            var remainder=document.getElementById("remainder");
+            var t_end="2023-01-20 18:30:00";
+            var after_t_end=new Date(t_end.replace(/-/g,"/"));//转换时间展示格式
+            var t_start=new Date();
+            var D_value_time=after_t_end.getTime()-t_start.getTime();//两个时间戳之间的毫秒数
+            var a=t_start.getTime();
+            var remainder_seconds=parseInt(D_value_time/1000);//将毫秒转换为秒
+            var remainder_seconds=remainder_seconds;
+            remainder.innerHTML=remainder_seconds;
+        }
+        
+        getRealTime();
+        getRemainderTime();
+        
+        window.onload=function(){
+                window.setInterval(getRealTime,1000);
+                window.setInterval(getRemainderTime,1000)
+        }
+        // window.onload=function(){
+        //     window.setInterval(getRemainderTime,1000);
+        // }
+
+    </script>
+</html>
