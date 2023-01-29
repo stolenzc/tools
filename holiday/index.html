@@ -49,6 +49,7 @@
         <br/>
         <span>距离</span>
         <span id="endDate", class="num_show"></span>
+        <span id="holiday"></span>
         <!-- <span id="year", class="num_show"></span>
         <span>年</span>
         <span id="month", class="num_show"></span>
@@ -57,9 +58,9 @@
         <span>日</span>
         <span id="hour", class="num_show"></span>
         <span>时</span> -->
-        <span>春节放假还剩</span>
+        <span>放假还剩</span>
         <span id="show_day", class="num_show"></span>
-        <span>个工作秒</span>
+        <span>秒</span>
     </div>
     <script>
         Date.prototype.Format = function (fmt) {
@@ -94,18 +95,24 @@
             }
             return "没有该参数信息";
         };
+
+        // 获取假期时间
         endDateStr = getLocationParams("endDate")
         if (endDateStr == "没有该参数信息") {
-            endDateStr = "2023-01-19 18:00:00"
+            var end_date = nextFriday()
         }else{
-            endDateStr = endDateStr + " 18:00:00"
+            var end_date = new Date(endDateStr);
         }
 
-        var end_date = new Date(endDateStr);
-        setDateShow(end_date)
-        updateHolidaySeconds()
+        // 获取假期名称
+        holiday = getLocationParams("holiday")
+        if (holiday == "没有该参数信息") {
+            holiday = "周五下班"
+        }
 
-        function setDateShow(end_date){
+        initialLoad();
+
+        function setDateShow(){
             document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
             document.getElementById("endDate").innerText = end_date.Format("yyyy-MM-dd hh:mm:ss");
             // document.getElementById("year").innerText = end_date.getFullYear();
@@ -120,20 +127,32 @@
             if (now > end_date) {
                 return 0
             }
-            var day = now.getDate();
-            if (now.getHours() >= 18) {
-                remainSeconds = 0
-            }else if (now.getHours()<8 || (now.getHours()==8 && now.getMinutes()<30)){
-                remainSeconds = 9.5 * 60 * 60
-            }else{
-                remainSeconds = 60 - now.getSeconds() + 60 * (59 - now.getMinutes()) + 60 * 60 * (17 - now.getHours())
-            }
-            for(i=day+1;i<=endDay;i++){
-                remainSeconds += 60 * 60 * 9.5
-            }
+            remainSeconds = parseInt((end_date - now) / 1000);
+            // var day = now.getDate();
+            // if (now.getHours() >= 18) {
+            //     remainSeconds = 0
+            // }else if (now.getHours()<8 || (now.getHours()==8 && now.getMinutes()<30)){
+            //     remainSeconds = 9.5 * 60 * 60
+            // }else{
+            //     remainSeconds = 60 - now.getSeconds() + 60 * (59 - now.getMinutes()) + 60 * 60 * (17 - now.getHours())
+            // }
+            // for(i=day+1;i<=endDay;i++){
+            //     remainSeconds += 60 * 60 * 9.5
+            // }
             return remainSeconds
         }
 
+        function nextFriday(){
+            now = new Date();
+            week = now.getDay();
+            today = new Date(now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate());
+            if (week < 6){
+                friday = today.getTime() + (5 - week) * 24 * 60 * 60 * 1000 + 18.5 * 60 * 60 * 1000;
+            }else{
+                friday = today.getTime() + (12 - week) * 24 * 60 * 60 * 1000 + 18.5 * 60 * 60 * 1000;
+            }
+            return new Date(friday);
+        }
 
         function updateHolidaySeconds(){
             remainSeconds = getHolidaySeconds();
@@ -146,6 +165,12 @@
             if (typeof timer != "undefined" && remainSeconds == 0) {
                 clearInterval(timer);
             }
+        }
+
+        function initialLoad(){
+            document.getElementById("holiday").innerText = holiday;
+            setDateShow()
+            updateHolidaySeconds()
         }
 
         var timer = setInterval(updateHolidaySeconds, 1000);
