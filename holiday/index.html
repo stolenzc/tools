@@ -127,7 +127,8 @@
             if (now > end_date) {
                 return 0
             }
-            remainSeconds = parseInt((end_date - now) / 1000);
+            // 获取到当前时间的毫秒不可能刚好为0，所以剩余秒数+1
+            remainSeconds = parseInt((end_date - now) / 1000) + 1;
             // var day = now.getDate();
             // if (now.getHours() >= 18) {
             //     remainSeconds = 0
@@ -146,10 +147,10 @@
             now = new Date();
             week = now.getDay();
             today = new Date(now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate());
-            if (week < 6){
+            if (week < 6 && week > 0){
                 friday = today.getTime() + (5 - week) * 24 * 60 * 60 * 1000 + 18.5 * 60 * 60 * 1000;
-            }else{
-                friday = today.getTime() + (12 - week) * 24 * 60 * 60 * 1000 + 18.5 * 60 * 60 * 1000;
+            // }else{
+            //     friday = today.getTime() + (12 - week) * 24 * 60 * 60 * 1000 + 18.5 * 60 * 60 * 1000;
             }
             return new Date(friday);
         }
