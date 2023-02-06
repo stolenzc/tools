@@ -2,45 +2,10 @@
 <title>holiday</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-    /* body{
-        width: 100%;
-        height: calc(100vh);
-        background-color: black;
-    }
-    .show_content{
-        width: 100%;
-        height: calc(100vh);
-        line-height: calc(100vh);
-        resize: none;
-        font-size: 50px;
-        text-align: center;
-        position: relative;
-        color: white;
-    } */
-    * {
-        margin: 0;
-        padding: 0;
-        border: 0;
-    }
-    body{
-        width: 100%;
-        height: 100vh;
-        background-color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .show_content {
-        color: white;
-        font-size: 50px;
-        text-align: center;
-    }
-    .num_show {
-        font-family: monospace
-    }
-</style>
+<link rel="stylesheet" href="/static/css/center.css">
+<style type="text/css" src="/static/css/center.css"></style>
+<script type="text/javascript" src="/static/js/formatDate.js"></script>
+<script type="text/javascript" src="/static/js/getUrlParams.js"></script>
 
 <body>
     <div class="show_content" id="show_content">
@@ -63,38 +28,6 @@
         <span>秒</span>
     </div>
     <script>
-        Date.prototype.Format = function (fmt) {
-            let o = {
-                "M+": this.getMonth() + 1, //月份
-                "d+": this.getDate(), //日
-                "h+": this.getHours(), //小时
-                "m+": this.getMinutes(), //分
-                "s+": this.getSeconds(), //秒
-                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                "S": this.getMilliseconds() //毫秒
-            };
-            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (let k in o)
-                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-            return fmt;
-        };
-
-        const getLocationParams = (keyWords) => {
-            // 提取路由值（字符串）
-            let href = window.location.href;
-            // 从占位符开始截取路由（不包括占位符）
-            let query = href.substring(href.indexOf("?") + 1);
-            // 根据 & 切割字符串
-            let vars = query.split("&");
-            for (let i = 0; i < vars.length; i++) {
-                let pair = vars[i].split("=");
-                // 根据指定的参数名去筛选参数值
-                if (pair[0] == keyWords) {
-                    return decodeURI(pair[1]);
-                }
-            }
-            return "没有该参数信息";
-        };
 
         // 获取假期时间
         endDateStr = getLocationParams("endDate")

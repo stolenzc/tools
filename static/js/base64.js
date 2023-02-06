@@ -87,7 +87,7 @@ function base64decode(str) {
 }
 function utf16to8(str) {
     var out, i, len, c;
-    out = "";z
+    out = "";
     len = str.length;
     for(i = 0; i < len; i++) {
     c = str.charCodeAt(i);
