@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<title>SQL输出转换</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/css/center.css">
+<script type="text/javascript" src="/static/js/getUrlParams.js"></script>
+<script type="text/javascript" src="/static/js/base64.js"></script>
+
+<style>
+
+    body {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        background-color: white;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .show_content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .num_show {
+        font-family: monospace
+    }
+
+    .show-rough {
+        border: 1px solid #ccc;
+        width: 100%;
+        height: 100vh;
+        resize: none;
+        font-size: large;
+    }
+
+    button {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid black;
+    }
+</style>
+
+<body>
+    <div class="show_content">
+        <textarea id="input" class="show-rough" placeholder="输入框"></textarea>
+        <div class="operation">
+            <button onclick="convert_to_json()" title="转为json">转为json</button>
+            <button onclick="convert_to_python()" title="转为Python">转为Python</button>
+        </div>
+        <textarea id="output" class="show-rough" placeholder="输出框"></textarea>
+    </div>
+
+    <script>
+        console.log("SQL 输出转换工具")
+        console.log("设计初衷：")
+        console.log("    线上数据库无法使用工具链接")
+        console.log("    只能通过命令行输出")
+        console.log("    但是命令行输出的数据格式不是json")
+        console.log("    无法直接放到代码中运行")
+        console.log("    需要手动转换")
+        console.log("使用方法：")
+        console.log("    1. 在线上数据库中执行sql，注意使用\G")
+        console.log("    2. 将输出的数据复制到左边的输入框中")
+        console.log("    3. 点击转为json按钮，将会在右边的输出框中显示转换后的数据")
+        console.log("    4. 将右边的输出框中的数据复制到代码中")
+        console.log("注意事项：")
+        console.log("    1. 如果sql中有列名带冒号，会导致转换失败")
+        console.log("    2. 笔者使用Python语言开发，特别提供了转为Python字典的功能")
+        console.log("    3. Python与json的区别为：null->None, true->True, false->False")
+        console.log("ENJOIN IT")
+
+        function deal_line(line_text, python=false) {
+            // 处理单行数据
+            line_text = line_text.trim()
+            commonIndex = line_text.indexOf(':')
+            if (commonIndex == -1) {
+                // 没找到冒号
+                return
+            }
+            // 不考虑sql列名带冒号的情况
+            if (line_text.length == commonIndex + 1) {
+                // 冒号在字符串结尾
+                key = line_text.slice(0, commonIndex)
+                value = ""
+            } else {
+                key = line_text.slice(0, commonIndex)
+                value = line_text.slice(commonIndex + 1)
+            }
+            key = key.trim()
+            value = value.trim()
+            if (value == 'NULL') {
+                value = null
+            }
+            if (value == 'true') {
+                value = true
+            }
+            if (value == 'false') {
+                value = false
+            }
+
+            if (python) {
+                if (value === null) {
+                    value = 'None'
+                }
+                if (value === true) {
+                    value = 'True'
+                }
+                if (value === false) {
+                    value = 'False'
+                }
+            }
+
+            return {
+                key: key,
+                value: value
+            }
+        }
+
+        function deal_block(line_block, python=false) {
+            // 处理单个块
+            line_block = line_block.trim()
+            line_array = line_block.split('\n')
+            var result = {}
+            for (let i = 0; i < line_array.length; i++) {
+                line_text = line_array[i]
+                if (line_text == '') {
+                    continue
+                }
+                line_data = deal_line(line_text, python=python)
+                if (line_data == undefined) {
+                    continue
+                }
+                result[line_data.key] = line_data.value
+            }
+            return result
+        }
+        
+        function deal_data(python=false) {
+            input_text = document.getElementById('input').value
+            var result = new Array()
+            input_array = input_text.split(/\*{27} \d+\. row \*{27}\n/)
+            for (let i = 0; i < input_array.length; i++) {
+                if (input_array[i] == '') {
+                    continue
+                }
+                result.push(deal_block(input_array[i], python=python))
+            }
+            return JSON.stringify(result, null, 4)
+        }
+
+        function output(data) {
+            document.getElementById('output').value = data
+        }
+
+        function convert_to_json () {
+            output(deal_data())
+        }
+
+        function replace_to_python(data) {
+            data = data.replace(/: "None"/g, ': None')
+            data = data.replace(/: "True"/g, ': True')
+            data = data.replace(/: "False"/g, ': False')
+            return data
+        }
+
+        function convert_to_python () {
+            result = deal_data(python=true)
+            output(replace_to_python(result))
+        }
+    </script>
+
+</body>
