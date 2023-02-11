@@ -34,6 +34,11 @@
     <div class="show_content"></div>
     <script>
         console.log("获取编码函数: base64encode(utf16to8(src))")
+        console.log("    示例：base64encode(utf16to8('你好'))")
+        console.log("    结果：5L2g5aW9")
+        console.log("解析编码函数: utf8to16(base64decode(src))")
+        console.log("    示例：utf8to16(base64decode('5L2g5aW9'))")
+        console.log("    结果：你好")
         showContent = getLocationParams('show')
         if (showContent != '没有该参数信息') {
             showContent = utf8to16(base64decode(showContent))
