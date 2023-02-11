@@ -3,7 +3,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/static/css/center.css">
-<style type="text/css" src="/static/css/center.css"></style>
 <script type="text/javascript" src="/static/js/formatDate.js"></script>
 <script type="text/javascript" src="/static/js/getUrlParams.js"></script>
 
@@ -77,9 +76,10 @@
         }
 
         function nextFriday(){
-            now = new Date();
-            week = now.getDay();
-            today = new Date(now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate());
+            var now = new Date();
+            var week = now.getDay();
+            var today = new Date(now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate());
+            var friday = 0;
             if (week < 6 && week > 0){
                 friday = today.getTime() + (5 - week) * 24 * 60 * 60 * 1000 + 18.5 * 60 * 60 * 1000;
             // }else{
