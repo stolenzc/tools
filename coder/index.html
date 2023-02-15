@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<title>SQL输出转换</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/css/center.css">
+<script type="text/javascript" src="/static/js/getUrlParams.js"></script>
+<script type="text/javascript" src="/static/js/base64.js"></script>
+
+<style>
+    body{
+        width: 100%;
+        /* justify-content: center; */
+        display: block;
+        /* align-items: center; */
+        background-color: white;
+    }
+    .textbox {
+        width: 100%;
+        height: 500px;
+        resize: none;
+        font-size: large;
+    }
+    .buttonBox {
+        box-sizing: border-box;
+        border: solid 3px white;
+        width: 100%;
+        height: 10%;
+        font-size: large;
+    }
+    textarea {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        font-size: large;
+        /* 盒子内部框 */
+        box-sizing: border-box;
+        border: solid 1px black;
+        padding: 10px;
+    }
+    button {
+        font-size: large;
+        box-sizing: border-box;
+        border: solid 1px black;
+    }
+
+</style>
+
+<body>
+    <div class="textbox">
+        <textarea id="input"></textarea>
+    </div>
+    <div class="buttonBox">
+        <button onclick="unicodeToChinese()">Unicode转中文</button>
+        <button onclick="chineseToUnicode()">中文转Unicode</button>
+        <button onclick="setStr('')">清空</button>
+    </div>
+    <div class="textbox">
+        <textarea id="output"></textarea>
+    </div>
+    <script>
+        function getStr() {
+            var str = document.getElementById("input").value;
+            return str;
+        }
+
+        function setStr(str) {
+            document.getElementById("output").value = str;
+        }
+
+        function unicodeToChinese() {
+            str = getStr();
+            var reg = /\\u[0-9a-fA-F]{2,4}/g;
+            var result = str.replace(reg, function (match) {
+                var temp = parseInt(match.replace(/\\u/, ""), 16);
+                return String.fromCharCode(temp);
+            });
+            setStr(result);
+        }
+
+        function chineseToUnicode() {
+            str = getStr();
+            var result = "";
+            for (var i = 0; i < str.length; i++) {
+                result += "\\u" + str.charCodeAt(i).toString(16);
+            }
+            setStr(result);
+        }
+    </script>
+
+</body>
