@@ -47,8 +47,10 @@
     <div class="show_content">
         <textarea id="input" class="show-rough" placeholder="输入框"></textarea>
         <div class="operation">
-            <button onclick="convert_to_json()" title="转为json">转为json</button>
+            <button onclick="convert_to_json()" title="转为json">转换为json</button>
             <button onclick="convert_to_python()" title="转为Python">转为Python</button>
+            <button onclick="convert_to_insert()" title="转为insert语句">转为Insert</button>
+            <button onclick="convert_to_insert(include_id=true)" title="转为insert语句">转为(ID)Insert</button>
         </div>
         <textarea id="output" class="show-rough" placeholder="输出框"></textarea>
     </div>
@@ -70,6 +72,9 @@
         console.log("    1. 如果sql中有列名带冒号，会导致转换失败")
         console.log("    2. 笔者使用Python语言开发，特别提供了转为Python字典的功能")
         console.log("    3. Python与json的区别为：null->None, true->True, false->False")
+        console.log("更新日志：")
+        console.log("    2023-02-11 添加转换网页，支持转换为JSON、Python格式数据")
+        console.log("    2023-02-16 添加转换为Insert语句的功能，ID表示Insert语句中包含id字段")
         console.log("ENJOIN IT")
 
         function deal_line(line_text, python=false) {
@@ -91,6 +96,12 @@
             }
             key = key.trim()
             value = value.trim()
+
+            if (Number(value).toString() != "NaN" && value != "") {
+                // 转换为数字
+                value = Number(value)
+            }
+
             if (value == 'NULL') {
                 value = null
             }
@@ -138,7 +149,7 @@
             return result
         }
         
-        function deal_data(python=false) {
+        function deal_data(python=false, original_data=false) {
             input_text = document.getElementById('input').value
             var result = new Array()
             input_array = input_text.split(/\*{27} \d+\. row \*{27}\n/)
@@ -147,6 +158,9 @@
                     continue
                 }
                 result.push(deal_block(input_array[i], python=python))
+            }
+            if (original_data===true) {
+                return result
             }
             return JSON.stringify(result, null, 4)
         }
@@ -167,8 +181,54 @@
         }
 
         function convert_to_python () {
-            result = deal_data(python=true)
+            result = deal_data(python=true, original_data=false)
             output(replace_to_python(result))
+        }
+
+        function convert_to_insert (include_id=false) {
+            values = ''
+            keys = ''
+            result = deal_data(python=false, original_data=true)
+            for (const item of result) {
+                value = ''
+                key = ''
+                for (var column in item) {
+                    if (include_id==false && column == 'id') {
+                        continue
+                    }
+
+                    data_str = item[column]
+                    if (typeof data_str === 'string') {
+                        data_str = '"' + data_str + '"'
+                    }
+
+                    if (value == '') {
+                        value += data_str
+                    } else {
+                        value += ',' + data_str
+                    }
+
+                    if (keys == "") {
+                        if (key == '') {
+                            key += column
+                        } else {
+                            key += ',' + column
+                        }
+                    }
+                }
+                if (value.length > 0) {
+                    value = '(' + value + ')'
+                    if (values == "") {
+                        values += value
+                    } else {
+                        values += ',' + value
+                    }
+                }
+            }
+
+            sql = 'INSERT INTO `table_name` (' + key + ') VALUES ' + values + ';'
+
+            output(sql)
         }
     </script>
 
