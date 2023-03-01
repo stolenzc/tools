@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 首页 */
+        #main_page {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(#aabbcc, #abbccd, #abcdef, #bbccdd, #bcddef, #ccddee, #fdfcfb);
+        }
+
+        /* 首页上部空白 */
+        #main_page .blank_in_main {
+        width: 100%;
+        height: 150px;
+        }
+
+        /* 中间方块 */
+        #main_page .block {
+        width: 700px;
+        height: 280px;
+        display: flex;
+        margin: 0 auto;
+        /* border-radius: 20px; */
+        border-left: red solid 6px;
+        border-bottom: yellow solid 6px;
+        }
+
+        /* #main_page .block:hover {
+        border: 1px solid rgba(77, 77, 77, 0.4);
+        -webkit-box-shadow: 0 0 70px #111;
+        box-shadow: 0 0 70px #111;
+        } */
+
+        #main_page .block .text {
+        width: 100%;
+        height: 100%;
+        color: #000;
+        left: 0;
+        top: 0;
+        }
+
+        #main_page .block .text h1 {
+        text-align: center;
+        font-family: my_first_font, STHeiti, \4e3d\9ed1 Pro, "microsoft yahei", \9ed1\4f53, sans-serif;
+        font-size: 75px;
+        }
+
+        #main_page .block .text p {
+        text-align: center;
+        font-size: 20px;
+        font-family: STHeiti, \4e3d\9ed1 Pro, "microsoft yahei", \9ed1\4f53, sans-serif;
+        font-size: 24px;
+        line-height: 38px;
+        }
+
+        #main_page .block .text p.foxmail_in_main {
+        color: #2C91DE;
+        font-family: Consolas;
+        }
+
+        #main_page .block .text p.neteasy_in_main {
+        color: #7d2704;
+        font-family: Consolas;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="main_page">
+        <div class="block">
+            <!-- <div class="text"> -->
+                <!-- <h1>hello, world</h1>
+                <p>狗日的杨俊明</p>
+                <p>狗日的Mr-ming</p>
+                <p>狗日的unicorn</p> -->
+            <!-- </div> -->
+        </div>
+    </div>
+</body>
+<!-- <script>
+    // 首页中间block随鼠标移动旋转部分
+    let mouse = {
+        X: 0,
+        Y: 0,
+        CX: 0,
+        CY: 0,
+    }, block = {
+        X: mouse.X,
+        Y: mouse.Y,
+    }
+    $('#main_page .block').on('mousemove', function (e) {
+        mouse.X = (e.pageX - $(this).offset().left) - $('#main_page .block').width() / 2
+        // e.pageX: 鼠标到浏览器视窗左边缘的距离
+        // $(this).offset().left: block元素左边缘到浏览器视窗左边缘的距离
+        mouse.Y = (e.pageY - $(this).offset().top) - $('#main_page .block').height() / 2
+        // e.pageY: 鼠标到浏览器视窗上边缘的距离
+        // $(this).offset().top: block元素上边缘到浏览器视窗上边缘的距离
+    })
+    $('#main_page .block').on('mouseleave', function (e) {
+        mouse.X = mouse.CX
+        mouse.Y = mouse.CY
+    })
+    setInterval(function () {
+        block.Y = block.Y + (mouse.Y - block.Y) / 12
+        block.X = block.X + (mouse.X - block.X) / 12
+        $('#main_page .block').css({
+            transform: 'scale(1.03) translate(' + (block.X * 0.05) + 'px, ' + (block.Y * 0.05) + 'px) rotateX(' + (block.Y * 0.05) + 'deg) rotateY(' + (block.X * 0.05) + 'deg)'
+        })
+    }, 20)
+</script> -->
+</html>
