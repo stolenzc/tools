@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<title>SQL输出转换</title>
+<title>Coder Tools</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/static/css/center.css">
@@ -52,6 +52,7 @@
     <div class="buttonBox">
         <button onclick="unicodeToChinese()">Unicode转中文</button>
         <button onclick="chineseToUnicode()">中文转Unicode</button>
+        <button onclick="exchange()">交换上下内容</button>
         <button onclick="setStr('')">清空</button>
     </div>
     <div class="textbox">
@@ -84,6 +85,13 @@
                 result += "\\u" + str.charCodeAt(i).toString(16);
             }
             setStr(result);
+        }
+
+        function exchange() {
+            var str1 = getStr();
+            var str2 = document.getElementById("output").value;
+            document.getElementById("input").value = str2;
+            document.getElementById("output").value = str1;
         }
     </script>
 
