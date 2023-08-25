@@ -53,6 +53,7 @@
         <button onclick="unicodeToChinese()">Unicode转中文</button>
         <button onclick="chineseToUnicode()">中文转Unicode</button>
         <button onclick="exchange()">交换上下内容</button>
+        <button onclick="redisLoad()">\x 文本加载</button>
         <button onclick="setStr('')">清空</button>
     </div>
     <div class="textbox">
@@ -84,6 +85,13 @@
             for (var i = 0; i < str.length; i++) {
                 result += "\\u" + str.charCodeAt(i).toString(16);
             }
+            setStr(result);
+        }
+
+        function redisLoad() {
+            str = getStr();
+            var result = "";
+            result = decodeURI(str.replace(/\\x/g, "%"));
             setStr(result);
         }
 

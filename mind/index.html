@@ -40,7 +40,9 @@
         console.log("    示例：utf8to16(base64decode('5L2g5aW9'))")
         console.log("    结果：你好")
         showContent = getLocationParams('show')
-        if (showContent != '没有该参数信息') {
+        if (showContent == 'working') {
+            document.getElementsByClassName('show_content')[0].innerHTML = '<img src="/static/img/working.jpg" height=50% width=50%>'
+        } else if (showContent != '没有该参数信息') {
             showContent = utf8to16(base64decode(showContent))
             document.getElementsByClassName('show_content')[0].innerText = showContent
         }
