@@ -47,9 +47,10 @@
     <div class="show_content">
         <textarea id="input" class="show-rough" placeholder="输入框"></textarea>
         <div class="operation">
-            <button onclick="convert_to_json()" title="转为json">转换为json</button>
+            <button onclick="convert_to_json()" title="转为json">转换为 JSON</button>
             <button onclick="convert_to_python()" title="转为Python">转为Python</button>
-            <button onclick="convert_to_insert()" title="转为insert语句">转为Insert</button>
+            <button onclick="convert_to_python_no_str()" title="转为Python(str)">转为Python(str)</button>
+            <button onclick="convert_to_insert()" title="转为insert语句">转换为 Insert</button>
             <button onclick="convert_to_insert(include_id=true)" title="转为insert语句">转为(ID)Insert</button>
         </div>
         <textarea id="output" class="show-rough" placeholder="输出框"></textarea>
@@ -83,9 +84,10 @@
         console.log("更新日志：")
         console.log("    2023-02-11 添加转换网页，支持转换为JSON、Python格式数据")
         console.log("    2023-02-16 添加转换为Insert语句的功能，ID表示Insert语句中包含id字段")
+        console.log("    2023-11-21 添加转换为Python(str)的功能，所有的value都按照字符串处理")
         console.log("ENJOIN IT")
 
-        function deal_line(line_text, python=false) {
+        function deal_line(line_text, python=false, value_is_str=false) {
             // 处理单行数据
             line_text = line_text.trim()
             commonIndex = line_text.indexOf(':')
@@ -105,7 +107,7 @@
             key = key.trim()
             value = value.trim()
 
-            if (Number(value).toString() != "NaN" && value != "") {
+            if (!value_is_str && Number(value).toString() != "NaN" && value != "") {
                 // 转换为数字
                 value = Number(value)
             }
@@ -138,7 +140,7 @@
             }
         }
 
-        function deal_block(line_block, python=false) {
+        function deal_block(line_block, python=false, value_is_str=false) {
             // 处理单个块
             line_block = line_block.trim()
             line_array = line_block.split('\n')
@@ -148,7 +150,7 @@
                 if (line_text == '') {
                     continue
                 }
-                line_data = deal_line(line_text, python=python)
+                line_data = deal_line(line_text, python=python, value_is_str=value_is_str)
                 if (line_data == undefined) {
                     continue
                 }
@@ -157,7 +159,7 @@
             return result
         }
         
-        function deal_data(python=false, original_data=false) {
+        function deal_data(python=false, original_data=false, value_is_str=false) {
             input_text = document.getElementById('input').value
             var result = new Array()
             input_array = input_text.split(/\*{27} \d+\. row \*{27}\n/)
@@ -165,7 +167,7 @@
                 if (input_array[i] == '') {
                     continue
                 }
-                result.push(deal_block(input_array[i], python=python))
+                result.push(deal_block(input_array[i], python=python, value_is_str=value_is_str))
             }
             if (original_data===true) {
                 return result
@@ -190,6 +192,12 @@
 
         function convert_to_python () {
             result = deal_data(python=true, original_data=false)
+            output(replace_to_python(result))
+        }
+
+        function convert_to_python_no_str() {
+            // 所有的 value 都按照字符串处理
+            result = deal_data(python=true, original_data=false, value_is_str=true)
             output(replace_to_python(result))
         }
 
