@@ -28,6 +28,11 @@
     </div>
     <script>
 
+        console.log("-------------------使用说明-------------------")
+        console.log("url中加入 endDate=2024-01-01 00:00:00 可以指定假期开始时间")
+        console.log("url中加入 holiday=new_year 可以指定假期名称")
+        console.log("-----------------end 使用说明-----------------")
+
         // 获取假期时间
         endDateStr = getLocationParams("endDate")
         if (endDateStr == "没有该参数信息") {
