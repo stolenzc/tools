@@ -78,6 +78,10 @@
         console.log("    2. 将输出的数据复制到左边的输入框中")
         console.log("    3. 点击转为json按钮，将会在右边的输出框中显示转换后的数据")
         console.log("    4. 将右边的输出框中的数据复制到代码中")
+        console.log("快捷键使用：")
+        console.log("    1. 在网页中按下 Ctrl/Command + c 键，会自动将剪贴板中的内容覆盖粘贴到输入框中")
+        console.log("    2. 在网页中按下 Enter 键，会自动调用转换为Python 按键功能")
+        console.log("    3. 在网页中按下 Ctrl/Command + v 键，会自动将输出文本框中的内容选中并复制到剪贴板中")
         console.log("注意事项：")
         console.log("    1. 如果sql中有列名带冒号，会导致转换失败")
         console.log("    2. 笔者使用Python语言开发，特别提供了转为Python字典的功能")
@@ -86,6 +90,7 @@
         console.log("    2023-02-11 添加转换网页，支持转换为JSON、Python格式数据")
         console.log("    2023-02-16 添加转换为Insert语句的功能，ID表示Insert语句中包含id字段")
         console.log("    2023-11-21 添加转换为Python(str)的功能，所有的value都按照字符串处理")
+        console.log("    2024-11-08 添加了页面快捷键的功能，操作纯键盘，脱离鼠标低效点击行为")
         console.log("ENJOIN IT")
 
         function deal_line(line_text, python = false, value_is_str = false) {
@@ -314,6 +319,54 @@
             document.body.appendChild(link);
             link.click();
         }
+
+        // 监听按下 enter 自动转换为 Python 格式的数据
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Enter") {
+                convert_to_python();
+            }
+        })
+
+        // 监听页面按下了 ctrl c 或 command c 后自动复制
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+                event.preventDefault(); // 阻止默认的复制行为
+
+                // 复制行为
+                const outputElement = document.getElementById('output');
+                outputElement.select(); // 选择文本
+                document.execCommand('copy'); // 执行复制操作
+            }
+        });
+
+        // 监听页面按下了 ctrl v 或 command v 后自动粘贴 (不会进行粘贴提示弹窗)
+        document.addEventListener('paste', function(event) {
+            // 获取粘贴的文本内容
+            const clipboardData = event.clipboardData || window.clipboardData;
+            const pastedText = clipboardData.getData('Text');
+
+            // 将粘贴的文本内容插入到指定输入框
+            event.preventDefault(); // 防止默认粘贴行为
+
+            const inputElement = document.getElementById('input');
+            inputElement.value = pastedText; // 将剪贴板内容粘贴到输入框
+        });
+        // // 监听页面按下了 ctrl v 或 command v 后自动粘贴 (会进行粘贴提示弹窗)
+        // document.addEventListener('keydown', function(event) {
+        //     if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
+        //         event.preventDefault(); // 阻止默认的粘贴行为
+
+        //         // 获取剪贴板内容
+        //         navigator.clipboard.readText().then(function(text) {
+        //             // 将剪贴板内容插入到指定输入框
+        //             const textArea = document.getElementById('input');
+        //             textArea.value = text; // 将剪贴板内容粘贴到输入框
+        //         }).catch(function(error) {
+        //             alert("无法读取剪贴板内容: ", error);
+        //         });
+        //     }
+        // });
+
     </script>
 
 </body>
