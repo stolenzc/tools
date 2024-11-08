@@ -7,7 +7,6 @@
 <script type="text/javascript" src="/static/js/base64.js"></script>
 
 <style>
-
     body {
         width: 100%;
         height: 100vh;
@@ -52,6 +51,8 @@
             <button onclick="convert_to_python_no_str()" title="转为Python(str)">转为Python(str)</button>
             <button onclick="convert_to_insert()" title="转为insert语句">转换为 Insert</button>
             <button onclick="convert_to_insert(include_id=true)" title="转为insert语句">转为(ID)Insert</button>
+            <button onclick="download_as_csv()" title="下载为 CSV">下载为 CSV</button>
+            <button onclick="download_row_as_csv()" title="下载为 CSV(ROW)">下载为 CSV(ROW)</button>
         </div>
         <textarea id="output" class="show-rough" placeholder="输出框"></textarea>
     </div>
@@ -87,7 +88,7 @@
         console.log("    2023-11-21 添加转换为Python(str)的功能，所有的value都按照字符串处理")
         console.log("ENJOIN IT")
 
-        function deal_line(line_text, python=false, value_is_str=false) {
+        function deal_line(line_text, python = false, value_is_str = false) {
             // 处理单行数据
             line_text = line_text.trim()
             commonIndex = line_text.indexOf(':')
@@ -140,7 +141,7 @@
             }
         }
 
-        function deal_block(line_block, python=false, value_is_str=false) {
+        function deal_block(line_block, python = false, value_is_str = false) {
             // 处理单个块
             line_block = line_block.trim()
             line_array = line_block.split('\n')
@@ -150,7 +151,7 @@
                 if (line_text == '') {
                     continue
                 }
-                line_data = deal_line(line_text, python=python, value_is_str=value_is_str)
+                line_data = deal_line(line_text, python = python, value_is_str = value_is_str)
                 if (line_data == undefined) {
                     continue
                 }
@@ -158,8 +159,8 @@
             }
             return result
         }
-        
-        function deal_data(python=false, original_data=false, value_is_str=false) {
+
+        function deal_data(python = false, original_data = false, value_is_str = false) {
             input_text = document.getElementById('input').value
             var result = new Array()
             input_array = input_text.split(/\*{27} \d+\. row \*{27}\n/)
@@ -167,9 +168,9 @@
                 if (input_array[i] == '') {
                     continue
                 }
-                result.push(deal_block(input_array[i], python=python, value_is_str=value_is_str))
+                result.push(deal_block(input_array[i], python = python, value_is_str = value_is_str))
             }
-            if (original_data===true) {
+            if (original_data === true) {
                 return result
             }
             return JSON.stringify(result, null, 4)
@@ -179,7 +180,7 @@
             document.getElementById('output').value = data
         }
 
-        function convert_to_json () {
+        function convert_to_json() {
             output(deal_data())
         }
 
@@ -190,26 +191,26 @@
             return data
         }
 
-        function convert_to_python () {
-            result = deal_data(python=true, original_data=false)
+        function convert_to_python() {
+            result = deal_data(python = true, original_data = false)
             output(replace_to_python(result))
         }
 
         function convert_to_python_no_str() {
             // 所有的 value 都按照字符串处理
-            result = deal_data(python=true, original_data=false, value_is_str=true)
+            result = deal_data(python = true, original_data = false, value_is_str = true)
             output(replace_to_python(result))
         }
 
-        function convert_to_insert (include_id=false) {
+        function convert_to_insert(include_id = false) {
             values = ''
             keys = ''
-            result = deal_data(python=false, original_data=true)
+            result = deal_data(python = false, original_data = true)
             for (const item of result) {
                 value = ''
                 key = ''
                 for (var column in item) {
-                    if (include_id==false && column == 'id') {
+                    if (include_id == false && column == 'id') {
                         continue
                     }
 
@@ -245,6 +246,73 @@
             sql = 'INSERT INTO `table_name` (' + key + ') VALUES ' + values + ';'
 
             output(sql)
+        }
+
+        function download_as_csv() {
+            result = deal_data(python = false, original_data = true)
+            values = ''
+            keys = ''
+            for (const item of result) {
+                key = ''
+                value = ''
+                for (var column in item) {
+
+                    data_str = item[column]
+
+                    if (value == '') {
+                        value += data_str
+                    } else {
+                        value += ',' + data_str
+                    }
+
+                    if (keys == "") {
+                        if (key == '') {
+                            key += column
+                        } else {
+                            key += ',' + column
+                        }
+                    }
+                }
+                if (value.length > 0) {
+                    value = value + "\n"
+                    if (values == "") {
+                        values += value
+                    } else {
+                        values += value
+                    }
+                }
+                if (keys == "") {
+                    keys = key
+                }
+            }
+
+            csv = keys + "\n" + values
+
+            download_csv_file(csv)
+        }
+
+
+        function download_row_as_csv() {
+            input_text = document.getElementById('input').value
+            input_text = input_text.replaceAll(" | ", ",")
+            input_text = input_text.replaceAll("| ", "")
+            input_text = input_text.replaceAll(" |", "")
+            input_text = input_text.replaceAll(" ", "")
+            // download_csv_file(csv_data)
+            output(input_text)
+        }
+
+        function download_csv_file(csv_data) {
+            var csv = 'data:text/csv;charset=utf-8,';
+
+            csv += csv_data
+
+            var encodedUri = encodeURI(csv);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "data.csv");
+            document.body.appendChild(link);
+            link.click();
         }
     </script>
 

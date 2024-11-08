@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>JSON to Markdown</title>
+</head>
+
+<body>
+
+    <h2>JSON to Markdown Converter</h2>
+
+    <textarea id="json-input" rows="50" cols="80" placeholder="请输入JSON数据"></textarea>
+
+    <textarea id="markdown-output" rows="50" cols="80" placeholder="转换后的markdown数据" readonly></textarea>
+
+    <script src="../static/js/json2markdown.js"></script>
+
+    <script>
+        // 监听JSON输入框的输入事件
+        document.getElementById('json-input').addEventListener('input', function () {
+            // 当JSON输入框内容变动时，自动调用转换函数并更新输出框  
+            convertToMarkdownTable();
+        });
+    </script>
+
+</body>
+
+</html>
