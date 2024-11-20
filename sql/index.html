@@ -320,6 +320,13 @@
             link.click();
         }
 
+        // 复制到剪贴板
+        function copy_to_clipboard() {
+            var copyText = document.getElementById("output");
+            copyText.select();
+            document.execCommand("copy");
+        }
+
         // 监听按下 enter 自动转换为 Python 格式的数据
         document.addEventListener('keydown', function(event) {
             if (event.key === "Enter") {
@@ -332,10 +339,7 @@
             if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
                 event.preventDefault(); // 阻止默认的复制行为
 
-                // 复制行为
-                const outputElement = document.getElementById('output');
-                outputElement.select(); // 选择文本
-                document.execCommand('copy'); // 执行复制操作
+                copy_to_clipboard()
             }
         });
 
@@ -350,6 +354,9 @@
 
             const inputElement = document.getElementById('input');
             inputElement.value = pastedText; // 将剪贴板内容粘贴到输入框
+
+            convert_to_python()
+            copy_to_clipboard()
         });
         // // 监听页面按下了 ctrl v 或 command v 后自动粘贴 (会进行粘贴提示弹窗)
         // document.addEventListener('keydown', function(event) {

@@ -49,6 +49,11 @@
 
         initialLoad();
 
+        remainSeconds = getHolidaySeconds()
+        remainDays = parseInt(remainSeconds / 86400)
+
+        document.title=holiday + "倒计时:" + remainDays
+
         function setDateShow(){
             document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
             document.getElementById("endDate").innerText = end_date.Format("yyyy-MM-dd hh:mm:ss");
