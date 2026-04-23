@@ -337,9 +337,14 @@
         // 监听页面按下了 ctrl c 或 command c 后自动复制
         document.addEventListener('keydown', function(event) {
             if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-                event.preventDefault(); // 阻止默认的复制行为
-
-                copy_to_clipboard()
+                const activeEl = document.activeElement;
+                const isOutput = activeEl === document.getElementById('output');
+                // 仅在未聚焦任何输入框，或聚焦在输出框且未选中文本时拦截
+                if (!['TEXTAREA', 'INPUT'].includes(activeEl.tagName) ||
+                    (isOutput && activeEl.selectionStart === activeEl.selectionEnd)) {
+                    event.preventDefault();
+                    copy_to_clipboard();
+                }
             }
         });
 
