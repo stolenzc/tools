@@ -112,6 +112,13 @@
             color: #636e72;
         }
 
+        .duration-text {
+            font-size: 0.75rem;
+            color: #b2bec3;
+            display: block;
+            margin-top: 0.3rem;
+        }
+
         .finish-msg {
             font-size: 1.5rem;
             font-weight: bold;
@@ -120,8 +127,8 @@
 
         .finish-img {
             margin-top: 1rem;
-            width: 100px;
-            border-radius: 50%;
+            max-width: 100%;
+            border-radius: 0;
         }
 
         /* 移动端适配 */
@@ -229,6 +236,7 @@
             <span class="label">剩余倒计时</span>
             <span id="show_day" class="num_show"></span>
             <span class="unit">秒</span>
+            <span id="show_duration" class="num_show duration-text"></span>
         </div>
     </div>
 
@@ -263,8 +271,20 @@
         function updateHolidaySeconds() {
             remainSeconds = getHolidaySeconds();
             if (remainSeconds > 0) {
-                document.getElementById("show_day").innerText = remainSeconds.toLocaleString(); // 增加千分位分隔符
+                document.getElementById("show_day").innerText = remainSeconds; // 去除千分位逗号
                 document.getElementById("now").innerText = new Date().Format("yyyy-MM-dd hh:mm:ss");
+
+                // 显示剩余的分钟和小时
+                const hours = Math.floor(remainSeconds / 3600);
+                const minutes = Math.floor((remainSeconds % 3600) / 60);
+                const secs = remainSeconds % 60;
+                if (hours > 0) {
+                    document.getElementById("show_duration").innerText = `${hours}小时${minutes}分钟${secs}秒`;
+                } else if (minutes > 0) {
+                    document.getElementById("show_duration").innerText = `${minutes}分钟${secs}秒`;
+                } else {
+                    document.getElementById("show_duration").innerText = `${secs}秒`;
+                }
 
                 // 动态同步标题
                 var remainDays = parseInt(remainSeconds / 86400);
@@ -273,7 +293,7 @@
                 document.getElementById("show_content").innerHTML = `
                     <div class="finish-msg">放假时间到了！</div>
                     <div style="margin-top:10px">快收拾东西回家吧</div>
-                    <img class="finish-img" src="https://cdn-icons-png.flaticon.com/512/2015/2015024.png" alt="fly">
+                    <img class="finish-img" src="/static/img/fly.webp" alt="fly">
                 `;
                 if (typeof timer !== "undefined") clearInterval(timer);
             }
